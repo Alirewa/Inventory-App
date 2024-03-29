@@ -1,2 +1,1 @@
 #Preview
-![Uploading image.png…]()
