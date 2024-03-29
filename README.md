@@ -1,2 +1,2 @@
-# Inventory-Application-JS
-# Inventory-Application-JS
+#Preview
+![Uploading image.png…]()
