@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- SEO -->
+    <title>سامانه انبارداری | مدیریت موجودی و محصولات</title>
+    <meta name="description" content="سامانه مدیریت انبار آنلاین. ثبت، جستجو، ویرایش و مدیریت موجودی کالا به صورت فارسی، بدون نیاز به نصب نرم‌افزار." />
+    <meta name="keywords" content="انبارداری, مدیریت موجودی, سامانه انبار, ثبت کالا, موجودی انبار, نرم افزار انبار" />
+    <meta name="author" content="Alirewa" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://alirewa.github.io/Inventory-App/" />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="سامانه انبارداری | مدیریت هوشمند موجودی" />
+    <meta property="og:description" content="مدیریت آسان موجودی و محصولات انبار به صورت فارسی و کاملاً رایگان" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://alirewa.github.io/Inventory-App/" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+    <!-- Tailwind CSS -->
+    <link rel="stylesheet" href="./build/tailwind.css" />
+
+    <style>
+      * { box-sizing: border-box; }
+      body { font-family: 'Vazirmatn', sans-serif; direction: rtl; }
+
+      input[type='number']::-webkit-inner-spin-button,
+      input[type='number']::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+
+      /* Scrollbar */
+      ::-webkit-scrollbar { width: 5px; }
+      ::-webkit-scrollbar-track { background: transparent; }
+      ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+
+      .card {
+        background: rgba(15, 23, 42, 0.95);
+        border: 1px solid rgba(51, 65, 85, 0.7);
+        border-radius: 1rem;
+      }
+
+      .input-field {
+        width: 100%;
+        background: rgba(2, 6, 23, 0.7);
+        border: 1px solid #334155;
+        border-radius: 0.75rem;
+        padding: 0.625rem 0.875rem;
+        color: #e2e8f0;
+        font-size: 0.875rem;
+        font-family: 'Vazirmatn', sans-serif;
+        transition: border-color 0.2s, box-shadow 0.2s;
+        outline: none;
+      }
+      .input-field:focus {
+        border-color: #6366f1;
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+      }
+      .input-field::placeholder { color: #475569; }
+      .input-field.error { border-color: #ef4444 !important; }
+
+      .btn-primary {
+        background: #4f46e5;
+        color: white;
+        border-radius: 0.75rem;
+        padding: 0.625rem 1.25rem;
+        font-weight: 600;
+        font-size: 0.875rem;
+        font-family: 'Vazirmatn', sans-serif;
+        transition: background 0.15s, transform 0.1s;
+        border: none;
+        cursor: pointer;
+        width: 100%;
+      }
+      .btn-primary:hover { background: #6366f1; }
+      .btn-primary:active { transform: scale(0.98); }
+
+      .btn-ghost {
+        background: transparent;
+        border: 1px solid #334155;
+        color: #94a3b8;
+        border-radius: 0.75rem;
+        padding: 0.625rem 1.25rem;
+        font-size: 0.875rem;
+        font-family: 'Vazirmatn', sans-serif;
+        cursor: pointer;
+        transition: background 0.15s, border-color 0.15s;
+        width: 100%;
+      }
+      .btn-ghost:hover { background: rgba(51, 65, 85, 0.4); border-color: #475569; }
+
+      .btn-success {
+        background: #059669;
+        color: white;
+        border-radius: 0.75rem;
+        padding: 0.75rem 1.25rem;
+        font-weight: 600;
+        font-size: 0.875rem;
+        font-family: 'Vazirmatn', sans-serif;
+        transition: background 0.15s, transform 0.1s;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        width: 100%;
+      }
+      .btn-success:hover { background: #10b981; }
+      .btn-success:active { transform: scale(0.98); }
+
+      .badge {
+        font-size: 0.7rem;
+        border-radius: 999px;
+        padding: 0.15rem 0.6rem;
+        font-weight: 600;
+        border: 1px solid;
+        display: inline-flex;
+        align-items: center;
+        white-space: nowrap;
+      }
+
+      /* Category Colors */
+      .cat-0 { background: rgba(99,102,241,0.15); color: #a5b4fc; border-color: rgba(99,102,241,0.35); }
+      .cat-1 { background: rgba(168,85,247,0.15); color: #d8b4fe; border-color: rgba(168,85,247,0.35); }
+      .cat-2 { background: rgba(14,165,233,0.15); color: #7dd3fc; border-color: rgba(14,165,233,0.35); }
+      .cat-3 { background: rgba(249,115,22,0.15); color: #fdba74; border-color: rgba(249,115,22,0.35); }
+      .cat-4 { background: rgba(20,184,166,0.15); color: #5eead4; border-color: rgba(20,184,166,0.35); }
+      .cat-5 { background: rgba(236,72,153,0.15); color: #f9a8d4; border-color: rgba(236,72,153,0.35); }
+      .cat-6 { background: rgba(234,179,8,0.15); color: #fde047; border-color: rgba(234,179,8,0.35); }
+      .cat-7 { background: rgba(239,68,68,0.15); color: #fca5a5; border-color: rgba(239,68,68,0.35); }
+
+      /* Toast */
+      .toast {
+        position: fixed;
+        bottom: 1.5rem;
+        left: 50%;
+        transform: translateX(-50%) translateY(80px);
+        opacity: 0;
+        transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+        z-index: 9999;
+        pointer-events: none;
+        min-width: 220px;
+        max-width: 90vw;
+      }
+      .toast.show {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+      }
+
+      /* Modal */
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.75);
+        backdrop-filter: blur(6px);
+        z-index: 200;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s;
+      }
+      .modal-overlay.open {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .modal-box {
+        background: #0f172a;
+        border: 1px solid #1e293b;
+        border-radius: 1.25rem;
+        width: 100%;
+        max-width: 28rem;
+        padding: 1.5rem;
+        transform: scale(0.93) translateY(16px);
+        transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+        box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+      }
+      .modal-overlay.open .modal-box {
+        transform: scale(1) translateY(0);
+      }
+
+      /* Product card */
+      .product-card {
+        transition: border-color 0.2s, transform 0.15s, box-shadow 0.2s;
+      }
+      .product-card:hover {
+        border-color: rgba(99, 102, 241, 0.4) !important;
+        box-shadow: 0 4px 20px rgba(99, 102, 241, 0.08);
+      }
+
+      /* Animations */
+      @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .fade-in { animation: fadeInUp 0.25s ease-out forwards; }
+
+      @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        20% { transform: translateX(-6px); }
+        40% { transform: translateX(6px); }
+        60% { transform: translateX(-3px); }
+        80% { transform: translateX(3px); }
+      }
+      .shake { animation: shake 0.35s ease-in-out; }
+
+      /* Category list item */
+      .cat-item {
+        background: rgba(30, 41, 59, 0.5);
+        border: 1px solid rgba(51, 65, 85, 0.5);
+        border-radius: 0.75rem;
+        padding: 0.625rem 0.875rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+        transition: border-color 0.15s, background 0.15s;
+      }
+      .cat-item:hover { background: rgba(30, 41, 59, 0.9); border-color: #475569; }
+
+      /* Qty indicator */
+      .qty-badge {
+        width: 2.75rem;
+        height: 2.75rem;
+        border-radius: 0.625rem;
+        font-weight: 700;
+        font-size: 0.875rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid;
+        flex-shrink: 0;
+      }
+      .qty-ok { background: rgba(16,185,129,0.12); color: #34d399; border-color: rgba(16,185,129,0.3); }
+      .qty-low { background: rgba(245,158,11,0.12); color: #fbbf24; border-color: rgba(245,158,11,0.3); }
+      .qty-empty { background: rgba(239,68,68,0.12); color: #f87171; border-color: rgba(239,68,68,0.3); }
+
+      /* Action buttons */
+      .action-btn {
+        width: 2.25rem;
+        height: 2.25rem;
+        border-radius: 0.625rem;
+        border: 1px solid #334155;
+        color: #64748b;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        background: transparent;
+        transition: all 0.15s;
+        flex-shrink: 0;
+      }
+      .action-btn:hover.edit-btn { border-color: rgba(99,102,241,0.5); color: #818cf8; background: rgba(99,102,241,0.1); }
+      .action-btn:hover.del-btn { border-color: rgba(239,68,68,0.5); color: #f87171; background: rgba(239,68,68,0.1); }
+    </style>
+  </head>
+
+  <body class="bg-slate-950 min-h-screen text-slate-100">
+
+    <!-- Toast -->
+    <div id="toast" class="toast">
+      <div id="toast-inner" class="flex items-center gap-3 px-5 py-3.5 rounded-2xl text-sm font-semibold shadow-2xl border">
+        <svg id="toast-icon" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"></svg>
+        <span id="toast-msg"></span>
+      </div>
+    </div>
+
+    <!-- Edit Product Modal -->
+    <div id="edit-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-label="ویرایش محصول">
+      <div class="modal-box">
+        <div class="flex items-center justify-between mb-5">
+          <div class="flex items-center gap-2.5">
+            <div class="w-7 h-7 bg-indigo-500/20 rounded-lg flex items-center justify-center">
+              <svg class="w-3.5 h-3.5 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              </svg>
+            </div>
+            <h3 class="text-sm font-bold text-slate-100">ویرایش محصول</h3>
+          </div>
+          <button id="close-edit-modal"
+            class="w-8 h-8 rounded-lg text-slate-500 hover:text-slate-300 hover:bg-slate-800 flex items-center justify-center transition-colors">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        <form class="flex flex-col gap-3.5">
+          <input type="hidden" id="edit-product-id" />
+          <div>
+            <label class="block text-xs text-slate-400 mb-1.5 font-medium" for="edit-product-title">نام محصول</label>
+            <input type="text" id="edit-product-title" class="input-field" placeholder="نام محصول را وارد کنید" />
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs text-slate-400 mb-1.5 font-medium" for="edit-product-quantity">تعداد موجودی</label>
+              <input type="number" id="edit-product-quantity" class="input-field" placeholder="۰" min="0" />
+            </div>
+            <div>
+              <label class="block text-xs text-slate-400 mb-1.5 font-medium" for="edit-product-price">قیمت (تومان)</label>
+              <input type="number" id="edit-product-price" class="input-field" placeholder="اختیاری" min="0" />
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs text-slate-400 mb-1.5 font-medium" for="edit-product-category">دسته‌بندی</label>
+            <select id="edit-product-category" class="input-field" style="background:#020617;"></select>
+          </div>
+          <div class="flex gap-3 pt-1">
+            <button type="button" id="cancel-edit-modal" class="btn-ghost">انصراف</button>
+            <button type="button" id="save-edit-product" class="btn-primary">ذخیره تغییرات</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Delete Confirm Modal -->
+    <div id="delete-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-label="تأیید حذف">
+      <div class="modal-box" style="max-width: 22rem;">
+        <div class="flex flex-col items-center text-center gap-4 mb-5">
+          <div class="w-14 h-14 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center justify-center">
+            <svg class="w-7 h-7 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-slate-100 mb-1.5">حذف محصول</h3>
+            <p class="text-sm text-slate-400 leading-relaxed">آیا مطمئنید؟ این عملیات قابل بازگشت نیست.</p>
+          </div>
+        </div>
+        <div class="flex gap-3">
+          <button type="button" id="cancel-delete" class="btn-ghost">انصراف</button>
+          <button type="button" id="confirm-delete"
+            class="flex-1 text-sm font-semibold py-2.5 px-4 rounded-xl bg-red-500/15 text-red-400 border border-red-500/30 hover:bg-red-500/25 transition-colors cursor-pointer">
+            بله، حذف شود
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- HEADER -->
+    <header class="bg-slate-900/95 backdrop-blur-md border-b border-slate-800 sticky top-0 z-50">
+      <div class="max-w-screen-xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-900/40 shrink-0">
+            <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+            </svg>
+          </div>
+          <div>
+            <h1 class="text-sm font-bold text-slate-100 leading-tight">سامانه انبارداری</h1>
+            <p class="text-xs text-slate-500">مدیریت هوشمند موجودی</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 bg-indigo-600/10 border border-indigo-500/20 rounded-full px-3 py-1.5">
+          <div class="w-2 h-2 rounded-full bg-indigo-400 animate-pulse"></div>
+          <span class="text-sm text-indigo-300 font-bold" id="total-products">۰</span>
+          <span class="text-xs text-indigo-400/70">محصول</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="max-w-screen-xl mx-auto px-4 sm:px-6 py-6">
+
+      <!-- STATS -->
+      <div class="grid grid-cols-3 gap-3 mb-6">
+        <div class="card p-4 sm:p-5">
+          <div class="flex items-start justify-between gap-2">
+            <div>
+              <p class="text-xs text-slate-500 mb-1.5">کل محصولات</p>
+              <p id="stat-products" class="text-2xl sm:text-3xl font-bold text-slate-100 tabular-nums">۰</p>
+            </div>
+            <div class="w-10 h-10 bg-indigo-500/15 rounded-xl flex items-center justify-center shrink-0">
+              <svg class="w-5 h-5 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+              </svg>
+            </div>
+          </div>
+          <p class="text-xs text-slate-600 mt-2">آیتم ثبت‌شده</p>
+        </div>
+
+        <div class="card p-4 sm:p-5">
+          <div class="flex items-start justify-between gap-2">
+            <div>
+              <p class="text-xs text-slate-500 mb-1.5">دسته‌بندی</p>
+              <p id="stat-categories" class="text-2xl sm:text-3xl font-bold text-slate-100 tabular-nums">۰</p>
+            </div>
+            <div class="w-10 h-10 bg-purple-500/15 rounded-xl flex items-center justify-center shrink-0">
+              <svg class="w-5 h-5 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+              </svg>
+            </div>
+          </div>
+          <p class="text-xs text-slate-600 mt-2">گروه محصولی</p>
+        </div>
+
+        <div id="low-stock-card" class="card p-4 sm:p-5 transition-all duration-500">
+          <div class="flex items-start justify-between gap-2">
+            <div>
+              <p class="text-xs text-slate-500 mb-1.5">موجودی کم</p>
+              <p id="stat-low-stock" class="text-2xl sm:text-3xl font-bold text-amber-400 tabular-nums">۰</p>
+            </div>
+            <div class="w-10 h-10 bg-amber-500/15 rounded-xl flex items-center justify-center shrink-0">
+              <svg class="w-5 h-5 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+            </div>
+          </div>
+          <p class="text-xs text-slate-600 mt-2">زیر ۵ عدد</p>
+        </div>
+      </div>
+
+      <!-- MAIN LAYOUT -->
+      <div class="grid grid-cols-1 lg:grid-cols-5 gap-5">
+
+        <!-- FORMS COLUMN -->
+        <div class="lg:col-span-2 space-y-4">
+
+          <!-- Add Category Accordion -->
+          <div class="card overflow-hidden">
+            <button id="toggle-add-category"
+              class="w-full flex items-center justify-between px-5 py-4 hover:bg-slate-800/40 transition-colors">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 bg-purple-500/20 rounded-lg flex items-center justify-center">
+                  <svg class="w-4 h-4 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                  </svg>
+                </div>
+                <span class="font-semibold text-slate-200 text-sm">افزودن دسته‌بندی</span>
+              </div>
+              <svg id="category-chevron"
+                class="w-4 h-4 text-slate-500 transition-transform duration-300"
+                fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            <div id="category-wrapper" class="hidden">
+              <div class="px-5 pb-5 border-t border-slate-800">
+                <form class="flex flex-col gap-3.5 pt-4">
+                  <div>
+                    <label class="block text-xs text-slate-400 mb-1.5 font-medium" for="category-title">عنوان دسته‌بندی</label>
+                    <input type="text" id="category-title"
+                      placeholder="مثال: الکترونیک، لوازم خانگی..." class="input-field" />
+                  </div>
+                  <div>
+                    <label class="block text-xs text-slate-400 mb-1.5 font-medium" for="category-description">توضیحات</label>
+                    <textarea id="category-description" rows="2"
+                      placeholder="توضیح کوتاهی درباره این دسته..."
+                      class="input-field resize-none"></textarea>
+                  </div>
+                  <div class="flex gap-2.5">
+                    <button id="cancel-add-category" type="button" class="btn-ghost">انصراف</button>
+                    <button id="add-new-category" type="button" class="btn-primary">ذخیره دسته</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <!-- Category List -->
+          <div id="category-list-section" class="card p-4 hidden">
+            <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">دسته‌بندی‌ها</p>
+            <div id="category-list" class="space-y-2"></div>
+          </div>
+
+          <!-- Add Product Form -->
+          <div class="card p-5">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-8 h-8 bg-emerald-500/20 rounded-lg flex items-center justify-center">
+                <svg class="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                </svg>
+              </div>
+              <h2 class="font-semibold text-slate-200 text-sm">افزودن محصول</h2>
+            </div>
+            <form class="flex flex-col gap-3.5">
+              <div>
+                <label class="block text-xs text-slate-400 mb-1.5 font-medium" for="product-title">نام محصول</label>
+                <input type="text" id="product-title" placeholder="نام محصول را وارد کنید" class="input-field" />
+              </div>
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-xs text-slate-400 mb-1.5 font-medium" for="product-quantity">تعداد</label>
+                  <input type="number" id="product-quantity" placeholder="۰" min="0" class="input-field" />
+                </div>
+                <div>
+                  <label class="block text-xs text-slate-400 mb-1.5 font-medium" for="product-price">قیمت (تومان)</label>
+                  <input type="number" id="product-price" placeholder="اختیاری" min="0" class="input-field" />
+                </div>
+              </div>
+              <div>
+                <label class="block text-xs text-slate-400 mb-1.5 font-medium" for="product-category">دسته‌بندی</label>
+                <select id="product-category" class="input-field" style="background:#020617;">
+                  <option value="" style="color:#64748b;">ابتدا یک دسته اضافه کنید</option>
+                </select>
+              </div>
+              <button id="add-new-product" type="button" class="btn-success mt-1">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                </svg>
+                افزودن محصول
+              </button>
+            </form>
+          </div>
+
+        </div>
+
+        <!-- PRODUCTS COLUMN -->
+        <div class="lg:col-span-3">
+
+          <!-- Search & Filter -->
+          <div class="card p-3.5 mb-4">
+            <div class="flex flex-col sm:flex-row gap-2.5">
+              <div class="relative flex-1">
+                <svg class="absolute top-1/2 -translate-y-1/2 right-3 w-4 h-4 text-slate-600 pointer-events-none"
+                  fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <input type="text" id="search-input" placeholder="جستجو در نام محصولات..."
+                  class="input-field" style="padding-right: 2.5rem;" />
+              </div>
+              <div class="flex gap-2 sm:shrink-0">
+                <select id="filter-category" class="input-field" style="background:#020617; min-width:8rem;">
+                  <option value="">همه دسته‌ها</option>
+                </select>
+                <select id="sort-products" class="input-field" style="background:#020617; min-width:9rem;">
+                  <option value="newest">جدیدترین</option>
+                  <option value="oldest">قدیمی‌ترین</option>
+                  <option value="qty-asc">موجودی: کم به زیاد</option>
+                  <option value="qty-desc">موجودی: زیاد به کم</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Products List -->
+          <div id="products-list" class="space-y-2.5"></div>
+
+          <!-- Empty State -->
+          <div id="empty-state" class="hidden card p-12 text-center">
+            <div class="w-16 h-16 bg-slate-800/80 rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <svg class="w-8 h-8 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+              </svg>
+            </div>
+            <p class="text-slate-300 font-semibold mb-1.5">هنوز محصولی اضافه نشده</p>
+            <p class="text-slate-600 text-sm">اولین محصول را از فرم سمت راست اضافه کنید</p>
+          </div>
+
+          <!-- No Results -->
+          <div id="no-results-state" class="hidden card p-10 text-center">
+            <div class="w-14 h-14 bg-slate-800/80 rounded-2xl flex items-center justify-center mx-auto mb-3.5">
+              <svg class="w-7 h-7 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+            <p class="text-slate-400 font-medium">نتیجه‌ای یافت نشد</p>
+            <p class="text-slate-600 text-sm mt-1">عبارت جستجو یا فیلتر را تغییر دهید</p>
+          </div>
+
+        </div>
+      </div>
+    </main>
+
+    <div class="h-16"></div>
+    <script src="./js/app.js" type="module"></script>
+  </body>
+</html>
